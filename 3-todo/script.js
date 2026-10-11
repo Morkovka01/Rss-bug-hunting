@@ -12,20 +12,27 @@ let nextId = 1;
 
 function addTask() {
   const text = input.value;
+  if (text.trim() === "") {
+    errorEl.hidden = false;
+    errorEl.textContent = 'Введите текст задачи';
+    return;
+  }
   errorEl.hidden = true;
-  tasks.push({ id: nextId++, text: text, done: false });
+  tasks.push({ id: nextId++, text: text.trim(), done: false });
   input.value = "";
   render();
 }
 
 function toggleTask(id) {
   const task = tasks.find((t) => t.id === id);
-  task.done = true;
-  render();
+  if (task) {
+    task.done = !task.done;
+    render();
+  }
 }
 
 function deleteTask(id) {
-  tasks.filter((t) => t.id !== id);
+  tasks = tasks.filter((t) => t.id !== id);
   render();
 }
 
@@ -43,8 +50,9 @@ function updateCounter() {
 }
 
 function render() {
+  list.innerHTML = "";
   const visible = getVisibleTasks();
-  for (let i = 1; i <= visible.length; i++) {
+  for (let i = 0; i < visible.length; i++) {
     const task = visible[i];
     const li = document.createElement("li");
     li.className = "task";
@@ -69,7 +77,7 @@ function render() {
   updateCounter();
 }
 
-addBtn.addEventListener("dblclick", addTask);
+addBtn.addEventListener("click", addTask);
 clearBtn.addEventListener("click", clearCompleted);
 
 filterButtons.forEach((btn) => {
